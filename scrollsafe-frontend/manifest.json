@@ -1,0 +1,86 @@
+{
+  "manifest_version": 3,
+  "name": "ScrollSafe Modular",
+  "version": "1.0.0",
+  "description": "AI-generated content detection for short-form video platforms.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "downloads",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://www.youtube.com/*",
+    "*://m.youtube.com/*",
+    "*://www.instagram.com/*",
+    "*://www.tiktok.com/*",
+    "<all_urls>",
+    "http://127.0.0.1:8000/*",
+    "http://localhost:8000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/favicon-16x16.png",
+      "48": "icons/favicon-32x32.png",
+      "128": "icons/android-chrome-192x192.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.youtube.com/*",
+        "*://m.youtube.com/*",
+        "*://www.instagram.com/*",
+        "*://www.instagram.com/*",
+        "*://www.tiktok.com/*"
+      ],
+      "js": [
+        "content/globals.js",
+        "services/api.js",
+        "services/storage.js",
+        "ui/badge.js",
+        "adapters/youtube.js",
+        "adapters/instagram.js",
+        "adapters/tiktok.js",
+        "core/events.js",
+        "core/frame_sampler.js",
+        "core/samplers/youtube.js",
+        "core/samplers/instagram.js",
+        "core/samplers/tiktok.js",
+        "core/pipeline.js",
+        "core/main.js"
+      ],
+      "css": [
+        "styles/badge.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "core/main.js",
+        "core/events.js",
+        "core/frame_sampler.js",
+        "core/samplers/youtube.js",
+        "core/samplers/instagram.js",
+        "core/samplers/tiktok.js",
+        "core/pipeline.js",
+        "adapters/youtube.js",
+        "adapters/instagram.js",
+        "adapters/tiktok.js",
+        "services/api.js",
+        "services/storage.js",
+        "ui/badge.js",
+        "content/globals.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}

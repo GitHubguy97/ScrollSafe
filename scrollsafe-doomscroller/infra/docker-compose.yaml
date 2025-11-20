@@ -1,0 +1,65 @@
+# ScrollSafe Doomscroller Workers (Instance 2)
+# NOTE: This compose file does NOT include postgres or redis!
+# Workers connect to remote databases on Instance 1 via environment variables.
+
+services:
+  celery-worker:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: scrollsafe-doomscroller:latest
+    container_name: doomscroller-worker
+    command: celery -A doomscroller_pipeline.celery_app worker -Q analyze -l info --concurrency=2
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    deploy:
+      resources:
+        limits:
+          cpus: '1.4'
+          memory: 1.5G
+        reservations:
+          cpus: '0.8'
+          memory: 768M
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A doomscroller_pipeline.celery_app inspect ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - /tmp:/tmp  # For temp video files
+
+  celery-beat:
+    image: scrollsafe-doomscroller:latest
+    container_name: doomscroller-beat
+    command: celery -A doomscroller_pipeline.celery_app beat -l info
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    depends_on:
+      celery-worker:
+        condition: service_healthy
+
+  celery-flower:
+    image: mher/flower:2.0
+    container_name: doomscroller-flower
+    command: celery --broker=${CELERY_BROKER_URL} flower --port=5555
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    ports:
+      - "5555:5555"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M

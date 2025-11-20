@@ -1,0 +1,8 @@
+celery==5.3.4
+redis==5.0.1
+psycopg[binary]==3.1.17
+psycopg_pool==3.1.7
+requests==2.32.3
+python-dotenv==1.1.1
+yt-dlp==2024.10.7
+tenacity==9.0.0

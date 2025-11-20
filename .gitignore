@@ -1,0 +1,18 @@
+.claude/
+.vscode/
+out/
+test/
+
+# Environment configs inside scrollsafe-* projects
+scrollsafe-*/.env
+
+# Backend cookies bundle
+scrollsafe-backend/cookies/
+
+# Local resolver runner scripts
+resolver/main_run.py
+# Windows reserved device entry accidentally unpacked
+nul
+
+# Resolver/local environment configs
+resolver/.env
