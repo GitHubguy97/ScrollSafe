@@ -25,15 +25,50 @@
     const videoId = parts.length ? parts[parts.length - 1] : null;
 
     const actionContainer = card.querySelector(ACTION_CONTAINER_SELECTOR) || document.querySelector(ACTION_CONTAINER_SELECTOR);
-    const titleNode = card.querySelector('[data-e2e="video-desc"]');
-    const authorNode = card.querySelector('[data-e2e="video-author-uniqueid"]');
+    const metadataRoot = card.querySelector('.css-1efe0f-0be0dc34--DivContentFlexLayout.e1l1r7cp1') || card;
+    const descContainer = metadataRoot.querySelector('div[data-e2e="video-desc"]');
+    const titleNode = descContainer || card.querySelector('[data-e2e="video-desc"]');
+    const authorNode =
+      metadataRoot.querySelector('div.css-i02kzo-0be0dc34--DivCreatorInfoContainer.e1td56050 a[href^="/@"] p') ||
+      card.querySelector('[data-e2e="video-author-uniqueid"]');
 
     const username = authorNode?.textContent?.trim() || 'Unknown Creator';
-    const description = titleNode?.textContent?.trim() || '';
+
+    const captionSpans = descContainer?.querySelectorAll('span[data-e2e^="desc-span"]');
+    const description = captionSpans?.length
+      ? Array.from(captionSpans)
+          .map((node) => node.textContent || '')
+          .join('')
+          .trim()
+      : titleNode?.textContent?.trim() || '';
+
+    const hashtagSet = new Set();
+    const hashtagLinks =
+      descContainer?.querySelectorAll('a[data-e2e="search-common-link"][href^="/tag/"]') || [];
+    hashtagLinks.forEach((link) => {
+      const text = link.textContent?.trim() || link.innerText?.trim() || '';
+      const match = text.match(/#[\w]+/g);
+      if (match) {
+        match.forEach((tag) => hashtagSet.add(tag.replace(/^#/, '')));
+      }
+    });
+    if (description) {
+      const inlineMatches = description.match(/#[\w]+/g) || [];
+      inlineMatches.forEach((tag) => hashtagSet.add(tag.replace(/^#/, '')));
+    }
+    const hashtags = Array.from(hashtagSet);
 
     const url = buildCanonicalUrl({ username, videoId }) || window.location.href;
 
     monitorCard(card);
+
+    console.debug('[ScrollSafe][TikTok] metadata extracted', {
+      videoId,
+      channel: username,
+      caption: description || '',
+      hashtags,
+    });
+
     return {
       platform: PLATFORM_ID,
       renderer: card,
@@ -46,6 +81,8 @@
       metadata: {
         title: description,
         channel: username,
+        description,
+        hashtags,
       },
     };
   }
