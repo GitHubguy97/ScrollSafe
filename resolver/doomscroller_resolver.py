@@ -37,8 +37,8 @@ def _require_env(name: str) -> str:
     return value
 
 COOKIES_FILE = os.getenv("YTDLP_COOKIES_FILE", DEFAULT_COOKIES_FILE)
-INFER_API_URL = _require_env("INFER_API_URL")
-INFER_API_KEY = _require_env("INFER_API_KEY")
+INFER_API_URL = _require_env("DOOMSCROLLER_INFER_API_URL")
+INFER_API_KEY = _require_env("DOOMSCROLLER_INFER_API_KEY")
 HF_TOKEN = _require_env("HUGGING_FACE_API_KEY")
 
 
