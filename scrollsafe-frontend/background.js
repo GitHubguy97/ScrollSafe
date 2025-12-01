@@ -37,6 +37,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   })
     .then(async (response) => {
       if (!response.ok) {
+        if (response.status === 404) {
+          console.debug('[Background] API cache miss (404) for', endpoint);
+          sendResponse({
+            success: false,
+            error: `HTTP ${response.status}: ${response.statusText}`,
+            status: response.status,
+          });
+          return;
+        }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 

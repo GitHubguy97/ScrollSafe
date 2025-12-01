@@ -1,11 +1,11 @@
 (() => {
   const CACHE_DEBOUNCE_MS = 2000;
-  const DEEP_SCAN_DURATION_MS = 20000; // 20 seconds for progress animation to reach 95%
+  const DEEP_SCAN_DURATION_MS = 15000; // 20 seconds for progress animation to reach 95%
   const POLL_INTERVAL_MS = 3000; // Poll every 3 seconds
   const MAX_POLL_ATTEMPTS = 80; // 80 attempts × 3s = 240 seconds (4 minutes) for CPU inference
 
   const DEFAULT_PLATFORM = 'youtube';
-  const LOCAL_FRAME_CAPTURE_COUNT = 16;
+  const LOCAL_FRAME_CAPTURE_COUNT = 8;
 
   function createPipeline({ adapters }) {
     // Verify dependencies exist
@@ -183,7 +183,7 @@
             frameCount: LOCAL_FRAME_CAPTURE_COUNT,
             onProgress: ({ completed, total }) => {
               const ratio = total > 0 ? completed / total : 0;
-              const target = Math.min(0.9, ratio);
+              const target = Math.min(0.6, ratio * 0.75); // keep UI moving but leave room for long-running inference
               const current = progress?.progress ?? 0;
               if (progress && typeof progress.bumpTo === 'function' && current < target) {
                 progress.bumpTo(target);
@@ -331,8 +331,9 @@
           throw failure;
         }
 
-        if (progress?.progress < 0.8) {
-          progress?.bumpTo(progress.progress + 0.05);
+        if (progress?.progress < 0.85) {
+          const next = Math.min(0.85, progress.progress + 0.02);
+          progress?.bumpTo(next);
         }
 
         await delay(POLL_INTERVAL_MS);
