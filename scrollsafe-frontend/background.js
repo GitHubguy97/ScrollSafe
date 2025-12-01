@@ -1,8 +1,6 @@
 // ScrollSafe Background Script
 // Service worker for Chrome Extension (Manifest V3)
 
-console.log('dY", ScrollSafe: Background service worker loaded');
-
 const API_URL = 'https://api.scroll-safe.com';
 const FRAME_DOWNLOAD_DIR = 'Hackathon-project/out';
 
@@ -16,8 +14,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type !== 'API_REQUEST') {
     return false; // Not handling this message
   }
-
-  console.log('[Background] API_REQUEST received:', message);
 
   const { endpoint, method = 'GET', headers = {}, body } = message;
 
@@ -38,7 +34,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     .then(async (response) => {
       if (!response.ok) {
         if (response.status === 404) {
-          console.debug('[Background] API cache miss (404) for', endpoint);
           sendResponse({
             success: false,
             error: `HTTP ${response.status}: ${response.statusText}`,
@@ -57,11 +52,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         data = await response.text();
       }
 
-      console.log('[Background] API response:', { endpoint, status: response.status, data });
       sendResponse({ success: true, data, status: response.status });
     })
     .catch((error) => {
-      console.error('[Background] API request failed:', endpoint, error);
       sendResponse({ success: false, error: error.message });
     });
 
@@ -102,10 +95,8 @@ async function handleFrameCapture(message, sender, sendResponse) {
     const dataUrl = await captureVisibleTab(sender.tab.windowId, { format: 'jpeg', quality: 90 });
     const finalDataUrl = crop ? await cropCapturedImage(dataUrl, crop) : dataUrl;
     const filename = buildFrameFilename({ videoId, frameIndex, totalFrames });
-    console.log('[Background] Frame captured', { filename, frameIndex, timestamp });
     sendResponse?.({ success: true, filename, dataUrl: finalDataUrl });
   } catch (error) {
-    console.error('[Background] Frame capture failed', error);
     sendResponse?.({ success: false, error: error?.message || 'capture_failed' });
   }
 }
@@ -129,7 +120,6 @@ async function cropCapturedImage(dataUrl, cropInfo) {
     const croppedDataUrl = await blobToDataUrl(croppedBlob);
     return croppedDataUrl || dataUrl;
   } catch (error) {
-    console.warn('[Background] Cropping failed, falling back to original frame', error);
     return dataUrl;
   }
 }

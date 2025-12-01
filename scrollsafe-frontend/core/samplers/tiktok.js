@@ -23,7 +23,6 @@
   window.ScrollSafe = window.ScrollSafe || {};
   const samplerApi = window.ScrollSafe.frameSampler;
   if (!samplerApi?.registerSampler) {
-    console.error('[FrameSampler][TikTok] Sampler API unavailable');
     return;
   }
 

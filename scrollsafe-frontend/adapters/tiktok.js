@@ -62,13 +62,6 @@
 
     monitorCard(card);
 
-    console.debug('[ScrollSafe][TikTok] metadata extracted', {
-      videoId,
-      channel: username,
-      caption: description || '',
-      hashtags,
-    });
-
     return {
       platform: PLATFORM_ID,
       renderer: card,

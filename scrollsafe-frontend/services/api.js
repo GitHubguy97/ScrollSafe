@@ -20,7 +20,6 @@
         },
         (response) => {
           if (chrome.runtime.lastError) {
-            console.error('[API] Runtime error:', chrome.runtime.lastError);
             reject(new Error(chrome.runtime.lastError.message));
             return;
           }
@@ -55,7 +54,6 @@
       if (error.message.includes('404')) {
         return null;
       }
-      console.error('[ScrollSafe] Cache API error:', error);
       return null;
     }
   }
@@ -71,7 +69,6 @@
       });
       return data;
     } catch (error) {
-      console.error('[ScrollSafe] Analyze API error:', error);
       throw error;
     }
   }
@@ -85,7 +82,6 @@
       });
       return data;
     } catch (error) {
-      console.error('[ScrollSafe] Deep scan start error:', error);
       throw error;
     }
   }
@@ -98,7 +94,6 @@
       });
       return data;
     } catch (error) {
-      console.error('[ScrollSafe] Deep scan poll error:', error);
       throw error;
     }
   }
