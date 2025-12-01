@@ -25,7 +25,6 @@
 
   function match() {
     const result = location.hostname.includes('instagram.com');
-    console.debug('[ScrollSafe][Instagram] match?', result, location.hostname);
     return result;
   }
 
@@ -38,7 +37,6 @@
     if (OPV_PATH_REGEX.test(location.pathname)) {
       const videoId = extractShortcodeFromPath();
       if (videoId) {
-        console.debug('[ScrollSafe][Instagram] OPV path detected with videoId, showing badge');
         return true;  // Show badge for OPV if we can extract videoId from URL
       }
     }
@@ -305,7 +303,6 @@
     // For OPV posts, if no target found, try to use article or main as fallback
     if (!target && OPV_PATH_REGEX.test(location.pathname)) {
       target = document.querySelector('article') || document.querySelector('main');
-      console.debug('[ScrollSafe][Instagram] OPV fallback target:', target ? 'found' : 'not found');
     }
 
     if (!target) {
@@ -352,13 +349,6 @@
       channel,
     };
     const isPostLayout = OPV_PATH_REGEX.test(location.pathname);
-
-    console.debug('[ScrollSafe][Instagram] metadata extracted', {
-      videoId,
-      channel,
-      caption: captionText,
-      hashtags,
-    });
 
     return {
       platform: PLATFORM_ID,
@@ -440,7 +430,6 @@
   }
 
   function detectCandidate() {
-    console.debug('[ScrollSafe][Instagram] detectCandidate invoked');
     const currentVideo = largestVisibleVideo();
     const actionContainer = getActionContainer();
     if (!shouldDisplayBadge(currentVideo, actionContainer)) {
@@ -451,15 +440,11 @@
 
     startOverlayTracking();
     const candidate = buildCandidate({ video: currentVideo, actionContainer });
-    if (candidate) {
-      console.debug('[ScrollSafe][Instagram] candidate', candidate);
-    }
     return candidate;
   }
 
   window.ScrollSafe = window.ScrollSafe || {};
   window.ScrollSafe.adapters = window.ScrollSafe.adapters || [];
-  console.debug('[ScrollSafe][Instagram] adapter registered');
   window.ScrollSafe.adapters.push({
     id: PLATFORM_ID,
     match,

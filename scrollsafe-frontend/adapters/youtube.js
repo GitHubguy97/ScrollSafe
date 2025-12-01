@@ -3,29 +3,21 @@
 
   function match() {
     const result = location.hostname.includes('youtube.com');
-    console.debug('[ScrollSafe][YouTube] match?', result, location.hostname);
     return result;
   }
 
   function detectCandidate() {
-    console.debug('[ScrollSafe][YouTube] detectCandidate invoked', Date.now());
     const renderer = document.querySelector('ytd-reel-video-renderer');
-    if (!renderer) {
-      console.debug('[ScrollSafe][YouTube] no renderer found');
-    }
     if (!renderer) return null;
 
     const videoId = extractVideoId(renderer);
-    console.debug('[ScrollSafe][YouTube] videoId', videoId);
     if (!videoId) return null;
 
     const mount = renderer.querySelector('#actions.style-scope.ytd-reel-player-overlay-renderer');
-    console.debug('[ScrollSafe][YouTube] mount', mount);
     if (!mount) return null;
 
     const title = extractTitle(renderer);
     const channel = extractChannel(renderer);
-    console.debug('[ScrollSafe][YouTube] title/channel', title, channel);
 
     return {
       platform: PLATFORM_ID,
@@ -114,7 +106,6 @@
 
   window.ScrollSafe = window.ScrollSafe || {};
   window.ScrollSafe.adapters = window.ScrollSafe.adapters || [];
-  console.debug('[ScrollSafe][YouTube] adapter registered');
   window.ScrollSafe.adapters.push({
     id: PLATFORM_ID,
     match,

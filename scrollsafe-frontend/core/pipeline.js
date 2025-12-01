@@ -19,7 +19,6 @@
       throw new Error('[ScrollSafe][Pipeline] storage service not available');
     }
 
-    console.log('[ScrollSafe][Pipeline] Dependencies verified, initializing pipeline');
 
     const deepScanVerdicts = new Map();
     const processedMounts = new WeakSet();
@@ -50,7 +49,6 @@
 
     async function persistResult(videoId, title, channel, result, { force = false, platform, url } = {}) {
       if (!force && state.lastProcessedVideoId === videoId) {
-        console.log('[ScrollSafe] Skipping duplicate save for video', videoId);
         return;
       }
 
@@ -58,7 +56,6 @@
         state.lastProcessedVideoId = videoId;
       }
 
-      console.debug('[ScrollSafe][History] persistResult', {
         videoId,
         platform,
         title,
@@ -72,7 +69,6 @@
       state.analysisTimeout = setTimeout(async () => {
         state.analysisTimeout = null;
         if (state.currentVideoId !== candidate.videoId) {
-          console.log('[ScrollSafe] User moved on, skipping API fetch for', candidate.videoId);
           return;
         }
         await fetchHeuristicResult(candidate);
@@ -86,7 +82,6 @@
       const controller = new AbortController();
       state.pendingController = controller;
       try {
-        console.log('[ScrollSafe] Fetching heuristics for', videoId, 'platform', platform);
         const payload = { platform, video_id: videoId };
         if (metadata) {
           payload.metadata = metadata;
@@ -98,20 +93,15 @@
           // Only cache authoritative results (Admin Override, Doomscroller), not heuristics
           const isAuthoritative = result.source && result.source !== 'Backend API';
           if (isAuthoritative) {
-            console.log('[ScrollSafe] Caching authoritative result from', result.source);
             await storage.cacheVideoResult(videoId, result);
           } else {
-            console.log('[ScrollSafe] Heuristics result not cached (temporary)');
           }
           await persistResult(videoId, title, channel, result, { force: false, platform, url: candidate.url });
         } else {
-          console.log('[ScrollSafe] Result ready but user moved on', videoId);
         }
       } catch (error) {
         if (error.name === 'AbortError') {
-          console.log('[ScrollSafe] Heuristics request aborted for', videoId);
         } else {
-          console.error('[ScrollSafe] Heuristics request failed for', videoId, error);
           if (state.currentVideoId === videoId) {
             badge.showUnknown(badgeNode, 'API error - check backend connection');
           }
@@ -129,14 +119,12 @@
 
       const cacheResult = await api.checkCache(videoId, platform);
       if (cacheResult) {
-        console.log('[DeepScan] Cache hit for', videoId, cacheResult);
         badge.showResult(badgeNode, cacheResult);
         await storage.cacheVideoResult(videoId, cacheResult);
         await persistResult(videoId, title, channel, cacheResult, { force: false, platform, url: candidate.url });
 
         // Clear deep scan cache if this is an authoritative result
         if (cacheResult.source && cacheResult.source !== 'Backend API') {
-          console.log('[Pipeline] Clearing deep scan cache - authoritative result takes priority');
           deepScanVerdicts.delete(videoId);
         }
 
@@ -145,7 +133,6 @@
 
       const localResult = await storage.getCachedResult(videoId);
       if (localResult) {
-        console.log('[ScrollSafe] Local cache hit for', videoId);
         badge.showResult(badgeNode, localResult);
         await persistResult(videoId, title, channel, localResult, { force: false, platform, url: candidate.url });
         return;
@@ -162,7 +149,6 @@
       if (!videoId) return;
 
       if (state.activeDeepScans.has(videoId)) {
-        console.log('[DeepScan] Deep scan already running for', videoId);
         badge.showDeepScanBusy(badgeNode);
         return;
       }
@@ -198,12 +184,10 @@
             throw new Error('Frame capture produced no data');
           }
         } else {
-          console.warn('[DeepScan] Frame sampler unavailable - running backend without client frames');
         }
 
         await handleDeepScanBackend(candidate, { progress, frames: framesPayload });
       } catch (error) {
-        console.error('[DeepScan] Deep scan failed before upload', error);
         progress?.fail('Capture failed');
         if (state.currentVideoId === videoId) {
           const message =
@@ -229,7 +213,6 @@
 
       if (manageStateInternally) {
         if (state.activeDeepScans.has(videoId)) {
-          console.log('[DeepScan] Deep scan already running for', videoId);
           badge.showDeepScanBusy(badgeNode);
           return;
         }
@@ -250,24 +233,20 @@
         const startResponse = await api.startDeepScan(payload);
 
         const jobId = startResponse?.job_id || startResponse?.jobId;
-        console.log('[DeepScan] Job enqueued', videoId, 'jobId=', jobId, startResponse);
         if (!jobId) {
           throw new Error('Deep scan job did not return an id');
         }
 
         const deepScanResult = await pollDeepScanJob(jobId, videoId, progress);
-        console.log('[DeepScan] Final result received for', videoId, deepScanResult);
 
         // Check if admin label or authoritative result exists - it takes priority
         const authoritativeResult = await api.checkCache(videoId, candidate.platform || DEFAULT_PLATFORM);
         const finalResult = authoritativeResult || deepScanResult;
 
         if (authoritativeResult) {
-          console.log('[DeepScan] Admin label found, using authoritative result instead of deep scan');
           // Clear any existing deep scan cache - don't store admin labels in deep scan Map
           deepScanVerdicts.delete(videoId);
         } else {
-          console.log('[DeepScan] No admin label, using deep scan result');
           // Only store temporary deep scan results, never admin labels
           deepScanVerdicts.set(videoId, deepScanResult);
         }
@@ -283,7 +262,6 @@
         if (authoritativeResult) {
           await storage.cacheVideoResult(videoId, finalResult);
         } else {
-          console.log('[DeepScan] Deep scan result not cached (temporary)');
         }
         await persistResult(videoId, title, channel, finalResult, { force: true, platform: candidate.platform || DEFAULT_PLATFORM, url: candidate.url });
       } catch (error) {
@@ -291,7 +269,6 @@
           progress?.cancel?.();
         } else {
           deepScanVerdicts.delete(videoId);
-          console.error('[DeepScan] Deep scan failed for', videoId, error);
           const reason = error?.message === 'deep_scan_timeout'
             ? 'Timed out'
             : error?.message === 'deep_scan_failed'
@@ -318,14 +295,12 @@
       while (true) {
         attempts += 1;
         const response = await api.pollDeepScan(jobId);
-        console.log('[DeepScan] Poll', jobId, 'attempt', attempts, 'status', response?.status, response);
 
         if (response?.status === 'done' && response.result) {
           return response.result;
         }
 
         if (response?.status === 'failed') {
-          console.warn('[DeepScan] Job reported failure', jobId, response);
           const failure = new Error('deep_scan_failed');
           failure.details = response?.error;
           throw failure;
@@ -361,13 +336,11 @@
             // For Instagram, always re-run pipeline to check admin labels
             // even if we've seen this video before (important for demo accuracy)
             if (platform === 'instagram') {
-              console.log('[ScrollSafe][Instagram] Re-checking admin labels for', videoId);
               runPipeline(candidate);
             }
             return true;
           }
         } else {
-          console.debug('[ScrollSafe] Badge missing on known mount, reattaching');
         }
       }
 
@@ -404,7 +377,6 @@
         const observer = new MutationObserver((mutations) => {
           const existing = mount.querySelector('.scrollsafe-badge');
           if (!existing) {
-            console.debug('[ScrollSafe] Badge removed from mount, reattaching');
             const reapplied = badge.attachBadge(mount);
             if (reapplied) {
               candidate.badgeNode = reapplied;
@@ -416,7 +388,6 @@
           }
           for (const mutation of mutations) {
             if (Array.from(mutation.removedNodes || []).includes(existing)) {
-              console.debug('[ScrollSafe] Badge node removed by mutation', mutation);
               const reapplied = badge.attachBadge(mount);
               if (reapplied && mount.dataset) {
                 mount.dataset.scrollsafeBadgeVideoId = videoId;
@@ -445,12 +416,10 @@
 
           // Check if authoritative result exists (any backend cache result takes priority)
           if (authoritativeCheck) {
-            console.log('[Pipeline] Backend cache found - clearing deep scan cache and using authoritative result');
             deepScanVerdicts.delete(videoId);
             badge.showResult(badgeNode, authoritativeCheck);
           } else {
             // No backend cache - safe to show temporary deep scan result
-            console.log('[DeepScan] No backend cache - reapplying cached deep scan verdict for', videoId);
             badge.showResult(badgeNode, deepResult);
           }
         })();
@@ -471,7 +440,6 @@
           if (!candidate) continue;
           if (attachAndProcess(candidate)) return;
         } catch (error) {
-          console.error('[ScrollSafe] Adapter error:', adapter?.id, error);
         }
       }
     }
@@ -482,7 +450,6 @@
     window.addEventListener('scrollsafe:instagram-candidate', (event) => {
       const candidate = event?.detail;
       if (!candidate) return;
-      console.debug('[ScrollSafe][Instagram] candidate event received', candidate);
 
       // Instagram SPA navigation handling: reset state when video changes
       const { mount, videoId } = candidate;
@@ -493,7 +460,6 @@
 
         // If this is a new video OR same video but different URL session
         if (prevVideoId && prevVideoId !== videoId) {
-          console.log('[ScrollSafe][Instagram] Video changed from', prevVideoId, 'to', videoId);
 
           // Cancel in-flight heuristics/deep scans for the previous video
           resetDebouncers();
@@ -507,7 +473,6 @@
 
         // Session isolation: Clear deep scan results if this video is from a different URL
         if (cachedSession && cachedSession !== currentUrl) {
-          console.log('[ScrollSafe][Instagram] New session for video', videoId, '- clearing cached deep scan');
           deepScanVerdicts.delete(videoId);
         }
 

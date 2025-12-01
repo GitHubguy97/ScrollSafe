@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', loadData);
 
 function loadData() {
   chrome.storage.local.get(['sessionStats', 'videoHistory'], (data) => {
-    console.log('📊 Loaded data:', data);
     
     // Update stats
     updateStats(data.sessionStats);
@@ -122,7 +121,6 @@ function escapeHtml(text) {
 // Listen for storage changes and update in real-time
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local') {
-    console.log('📊 Storage updated, reloading data');
     loadData();
   }
 });

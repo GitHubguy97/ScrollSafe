@@ -39,7 +39,6 @@
   window.ScrollSafe = window.ScrollSafe || {};
   const samplerApi = window.ScrollSafe.frameSampler;
   if (!samplerApi?.registerSampler) {
-    console.error('[FrameSampler][YouTube] Sampler API unavailable');
     return;
   }
 

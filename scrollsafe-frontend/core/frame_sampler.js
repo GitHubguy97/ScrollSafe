@@ -146,7 +146,6 @@
         devicePixelRatio: window.devicePixelRatio || 1,
       };
     } catch (error) {
-      console.warn('[FrameSampler] Failed to compute crop rect', error);
       return null;
     }
   }

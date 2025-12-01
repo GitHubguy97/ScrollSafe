@@ -125,7 +125,6 @@
   }
 
   function showResult(node, result) {
-    console.log('[Badge] showResult', node, result);
     if (!node || !result) return;
     stopProgress(node);
 
@@ -168,7 +167,6 @@
   }
 
   function showUnknown(node, message) {
-    console.log('[Badge] showUnknown', node, message);
     if (!node) return;
     stopProgress(node);
     node.dataset.variant = 'unknown';
@@ -254,7 +252,6 @@
   }
 
   function startDeepScan(node, { durationMs = 12000 } = {}) {
-    console.log('[Badge] startDeepScan on node', node);
     if (!node) return null;
     stopProgress(node);
     node.dataset.variant = 'deepscan';
@@ -268,13 +265,11 @@
   }
 
   function showDeepScanBusy(node) {
-    console.log('[Badge] showDeepScanBusy', node);
     if (!node) return;
     setText(node, 'Deep scan', 'Analyzing...', 'Deep scan already running');
   }
 
   function showDeepScanError(node, message) {
-    console.log('[Badge] showDeepScanError', node, message);
     if (!node) return;
     stopProgress(node);
     node.dataset.variant = 'error';
