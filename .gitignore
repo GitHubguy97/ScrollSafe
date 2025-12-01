@@ -16,3 +16,4 @@ nul
 
 # Resolver/local environment configs
 resolver/.env
+resolver/

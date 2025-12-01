@@ -3,7 +3,7 @@
 
 console.log('dY", ScrollSafe: Background service worker loaded');
 
-const API_URL = 'http://127.0.0.1:8000';
+const API_URL = 'https://api.scroll-safe.com';
 const FRAME_DOWNLOAD_DIR = 'Hackathon-project/out';
 
 // API Proxy and frame capture handler. Content scripts use message passing to avoid PNA limits.
