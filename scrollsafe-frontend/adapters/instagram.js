@@ -8,6 +8,11 @@
     'div.html-div.xdj266r.x14z9mp.xexx8yu.xyri2b.x18d9i69.x1c1uobl.x9f619.xjbqb8w.x78zum5.x15mokao.x1ga7v0g.x16uus16.xbiv7yw.x12nagc.x1uhb9sk.x1plvlek.xryxfnj.x1c4vz4f.x2lah0s.xdt5ytf.xqjyukv.x6s0dn4.x1oa3qoh.x13a6bvl.x1diwwjn.x1247r65';
   const REEL_PATH_REGEX = /^\/reels?\/[A-Za-z0-9_\-]+\/?$/i;
   const OPV_PATH_REGEX = /^\/p\/[A-Za-z0-9_\-]+\/?$/i; // Open-Post View
+  const REEL_CARD_SELECTOR =
+    'div.x1qjc9v5.x9f619.x78zum5.xg7h5cd.x1mfogq2.xsfy40s.x1bhewko.xgv127d.xh8yej3.xl56j7k';
+  const REEL_AUTHOR_SELECTOR = 'a[aria-label$=" reels"] span[dir="auto"]';
+  const REEL_CAPTION_SELECTOR =
+    'div.x1g9anri[dir="auto"] span.xuxw1ft, div.x1g9anri span.xuxw1ft';
   const URL_POLL_INTERVAL_MS = 400;
 
   let overlayHost = null;
@@ -101,14 +106,13 @@
     }
 
     if (isReelLayout) {
-      const captionSpans = context.querySelectorAll('div[role="button"][aria-disabled="false"] span.xuxw1ft');
-      if (captionSpans.length) {
-        const caption = Array.from(captionSpans)
-          .map((span) => span.textContent?.trim() || '')
-          .join(' ')
-          .trim();
-        if (caption) return caption;
+      const captionNode = context.querySelector(REEL_CAPTION_SELECTOR);
+      if (captionNode?.textContent?.trim()) {
+        return captionNode.textContent.trim();
       }
+
+      // For reels, avoid falling back to global metadata which often stays stuck on the first reel.
+      return 'Instagram';
     }
 
     const metaTitle = document.querySelector('meta[property="og:title"]')?.content;
@@ -122,6 +126,7 @@
 
   function extractChannel(root = document) {
     const isPostLayout = OPV_PATH_REGEX.test(location.pathname);
+    const isReelLayout = REEL_PATH_REGEX.test(location.pathname);
     const context = root || document;
 
     if (isPostLayout) {
@@ -134,11 +139,14 @@
         const altMatch = headerAlt.alt.replace(/'s profile picture$/i, '').trim();
         if (altMatch) return altMatch;
       }
-    } else {
-      const reelHandle = context.querySelector('a[aria-label$=" reels"][href*="/reels/"] span[dir="auto"]');
+    } else if (isReelLayout) {
+      const reelHandle = context.querySelector(REEL_AUTHOR_SELECTOR);
       if (reelHandle?.textContent?.trim()) {
         return reelHandle.textContent.trim();
       }
+
+      // Same reasoning as titles: avoid global fallbacks for reels.
+      return 'Instagram';
     }
 
     const metaTitle = document.querySelector('meta[property="og:title"]')?.content;
@@ -217,19 +225,32 @@
 
   function resolveArticle(video, actionContainer) {
     if (video) {
+      const reelCard = video.closest(REEL_CARD_SELECTOR);
+      if (reelCard) return reelCard;
+
       const reelContainer = video.closest('div[role="presentation"]');
       if (reelContainer) return reelContainer;
+
       const videoArticle = video.closest('article');
       if (videoArticle) return videoArticle;
     }
 
     if (actionContainer) {
+      const actionCard = actionContainer.closest(REEL_CARD_SELECTOR);
+      if (actionCard) return actionCard;
+
       const actionArticle = actionContainer.closest('article');
       if (actionArticle) return actionArticle;
     }
 
     const dialogArticle = document.querySelector('div[role="dialog"] article');
     if (dialogArticle) return dialogArticle;
+
+    // Avoid falling back to a global document root for reels, which causes metadata bleed.
+    if (REEL_PATH_REGEX.test(location.pathname)) {
+      const firstCard = document.querySelector(REEL_CARD_SELECTOR);
+      if (firstCard) return firstCard;
+    }
 
     return document.querySelector('main article') || document.querySelector('article') || document;
   }
@@ -305,10 +326,24 @@
 
     const title = extractTitle(article);
     const channel = extractChannel(article);
-    const captionNode = article?.querySelector?.('[data-testid="caption"]');
+    const isReelLayout = REEL_PATH_REGEX.test(location.pathname);
+    const captionNode =
+      article?.querySelector?.('[data-testid="caption"]') ||
+      (isReelLayout ? article?.querySelector?.(REEL_CAPTION_SELECTOR) : null);
     const captionText = captionNode?.textContent?.trim() || title || '';
-    const hashtagMatches = captionText.match(/#[\w]+/g) || [];
-    const hashtags = hashtagMatches.map((tag) => tag.replace(/^#/, ''));
+
+    const hashtagSet = new Set();
+    const captionMatches = captionText.match(/#[\w]+/g) || [];
+    captionMatches.forEach((tag) => hashtagSet.add(tag.replace(/^#/, '')));
+
+    const clickableHashtags =
+      article?.querySelectorAll?.('a[role="link"][href*="/explore/tags/"]') || [];
+    clickableHashtags.forEach((node) => {
+      const text = node.textContent?.trim() || node.innerText?.trim() || '';
+      const matches = text.match(/#[\w]+/g) || [];
+      matches.forEach((tag) => hashtagSet.add(tag.replace(/^#/, '')));
+    });
+    const hashtags = Array.from(hashtagSet);
 
     const metadata = {
       title,
@@ -316,8 +351,14 @@
       hashtags,
       channel,
     };
-
     const isPostLayout = OPV_PATH_REGEX.test(location.pathname);
+
+    console.debug('[ScrollSafe][Instagram] metadata extracted', {
+      videoId,
+      channel,
+      caption: captionText,
+      hashtags,
+    });
 
     return {
       platform: PLATFORM_ID,
