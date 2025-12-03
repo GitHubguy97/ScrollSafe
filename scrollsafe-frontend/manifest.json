@@ -6,7 +6,6 @@
   "permissions": [
     "storage",
     "activeTab",
-    "downloads",
     "tabs"
   ],
   "host_permissions": [
@@ -14,9 +13,8 @@
     "*://m.youtube.com/*",
     "*://www.instagram.com/*",
     "*://www.tiktok.com/*",
-    "<all_urls>",
-    "http://127.0.0.1:8000/*",
-    "http://localhost:8000/*"
+    "https://api.scroll-safe.com/*",
+    "<all_urls>"
   ],
   "action": {
     "default_popup": "popup.html",

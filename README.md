@@ -2,9 +2,40 @@
 
 ScrollSafe is a full-stack system that flags likely AI-generated short-form videos in real time. It combines a Chrome extension, FastAPI services, Redis/Celery workers, residential resolvers, and a Hugging Face inference endpoint to overlay trustworthy signals on YouTube Shorts, Instagram Reels, and other feeds while you browse. This repository is the home for all future ScrollSafe development and the project I present to recruiters.
 
-> **Recognition:** Built for Google Developer Group Windsor’s **Innovate with AI** challenge (107 participants / 15 teams). ScrollSafe was selected as one of 6 finalists to demo live on Nov 7 and won **2nd place** during GDG DevFest on Nov 8. Demo + write-up: [Devpost](https://devpost.com/software/scrollsafe?ref_content=my-projects-tab&ref_feature=my_projects).
+> **Recognition:** Built for Google Developer Group Windsor's **Innovate with AI** challenge (107 participants / 15 teams). ScrollSafe was selected as one of 6 finalists to demo live on Nov 7 and won **2nd place** during GDG DevFest on Nov 8. Demo + write-up: [Devpost](https://devpost.com/software/scrollsafe?ref_content=my-projects-tab&ref_feature=my_projects).
 >
-> **Stable Release (YouTube-first):** The publicly shared v1 Chrome extension—which is the version most recruiters will evaluate—focuses on YouTube Shorts and is proven stable there. It is available on GitHub releases as a packed `.rar` for manual loading: [ScrollSafe Chrome Extension v1.0.0](https://github.com/GitHubguy97/ScrollSafe-chrome-extension/releases/tag/v1.0.0). Instagram Reels and TikTok adapters are in active development inside this monorepo. Once those implementations are production-ready, we plan to publish ScrollSafe to the Chrome Web Store so users can install updates seamlessly.
+> **Stable Release (YouTube-first):** The publicly shared v1 Chrome extension-which is the version most recruiters will evaluate-focuses on YouTube Shorts and is proven stable there. It is available on GitHub releases as a packed `.rar` for manual loading: [ScrollSafe Chrome Extension v1.0.0](https://github.com/GitHubguy97/ScrollSafe-chrome-extension/releases/tag/v1.0.0). Instagram Reels and TikTok adapters are in active development inside this monorepo. Once those implementations are production-ready, we plan to publish ScrollSafe to the Chrome Web Store so users can install updates seamlessly.
+
+---
+
+## System Design (At a Glance)
+
+<p align="center">
+  <img src="design.png" alt="ScrollSafe High-Level System Design" width="720">
+</p>
+
+- Chrome extension injects a badge into YouTube Shorts, Instagram Reels, and TikTok, then coordinates heuristics + optional deep scans.
+- FastAPI backend handles heuristics (`/api/analyze`), deep-scan job orchestration, admin metrics, and caching (Redis/Postgres).
+- Celery workers run deep scans over captured frames and call a SwinV2 inference endpoint (GPU/CPU), writing results back to Redis.
+
+---
+
+## Product Screenshots
+
+<p align="center">
+  <img src="scrollsafe-screenshot1.png" alt="ScrollSafe popup stats and history" width="360">
+  <img src="scrollsafe-screenshot2.png" alt="ScrollSafe badge on YouTube Shorts" width="360">
+</p>
+
+<p align="center">
+  <img src="scrollsafe-screenshot3.1.png" alt="Deep scan progress on Instagram Reels" width="360">
+  <img src="scrollsafe-screenshot3.2.png" alt="Deep scan result badge" width="360">
+</p>
+
+<p align="center">
+  <img src="scrollsafe-screenshot4.png" alt="Recent videos history view" width="360">
+  <img src="scrollsafe-screenshot5.png" alt="ScrollSafe system components overview" width="360">
+</p>
 
 ---
 

@@ -56,12 +56,6 @@
         state.lastProcessedVideoId = videoId;
       }
 
-        videoId,
-        platform,
-        title,
-        channel,
-        force,
-      });
       await storage.updateSessionHistory({ videoId, title, channel, result, platform, url, force });
     }
 
