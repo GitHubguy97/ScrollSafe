@@ -1,4 +1,14 @@
 (() => {
+  if (typeof chrome === 'undefined' || !chrome.storage?.local) {
+    window.ScrollSafe = window.ScrollSafe || {};
+    window.ScrollSafe.storage = {
+      getCachedResult: async () => null,
+      cacheVideoResult: async () => {},
+      updateSessionHistory: async () => {}
+    };
+    return;
+  }
+
   const SESSION_KEY = 'sessionStats';
   const HISTORY_KEY = 'videoHistory';
 

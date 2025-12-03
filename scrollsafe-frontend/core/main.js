@@ -11,6 +11,7 @@
       return;
     }
     if (!deps.adapters || deps.adapters.length === 0) {
+      return;
     }
     if (!deps.badge) {
       return;
@@ -21,14 +22,6 @@
     if (!deps.storage) {
       return;
     }
-
-      badge: !!deps.badge,
-      api: !!deps.api,
-      storage: !!deps.storage,
-      adapters: deps.adapters.length,
-      createPipeline: !!deps.createPipeline,
-      createEventBridge: !!deps.createEventBridge
-    });
 
     const pipeline = deps.createPipeline({ adapters: deps.adapters });
     const events = deps.createEventBridge(() => pipeline.detect());
