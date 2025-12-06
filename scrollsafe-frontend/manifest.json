@@ -5,8 +5,7 @@
   "description": "AI-generated content detection for short-form video platforms.",
   "permissions": [
     "storage",
-    "activeTab",
-    "tabs"
+    "activeTab"
   ],
   "host_permissions": [
     "*://www.youtube.com/*",
