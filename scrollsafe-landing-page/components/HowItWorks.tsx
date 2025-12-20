@@ -19,6 +19,11 @@ const HowItWorks: React.FC = () => {
       title: "Label",
       description: "A compact badge appears on the player with a tooltip explaining why it's Verified, Suspicious, or Likely AI.",
       icon: <Info className="w-6 h-6" />
+    },
+    {
+      title: "Doom Scroller",
+      description: "Our always-on crawler runs on ScrollSafe servers, patrolling public feeds, flagging AI clips, and preloading metadata so the extension can warn you before you reach them.",
+      icon: <Search className="w-6 h-6" />
     }
   ];
 
