@@ -21,21 +21,21 @@ const SupportedPlatforms: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {platforms.map((p, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className={`p-6 rounded-xl border flex flex-col items-center justify-center space-y-3 transition-all ${
-                p.supported 
-                ? 'border-teal-100 bg-teal-50/30' 
-                : 'border-slate-100 bg-slate-50 opacity-60'
+                p.supported
+                  ? 'border-[#2d7bff]/30 bg-[#e8f1ff]'
+                  : 'border-slate-100 bg-slate-50 opacity-60'
               }`}
             >
-              <div className={p.supported ? 'text-teal-600' : 'text-slate-400'}>
+              <div className={p.supported ? 'text-[#2d7bff]' : 'text-slate-400'}>
                 {p.icon}
               </div>
               <span className={`font-semibold text-sm ${p.supported ? 'text-slate-900' : 'text-slate-500'}`}>
                 {p.name}
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-teal-600">Supported</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#2d7bff]">Supported</span>
               <span className="text-xs text-slate-500">{p.note}</span>
             </div>
           ))}

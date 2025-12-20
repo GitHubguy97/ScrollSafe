@@ -37,7 +37,9 @@ const Hero: React.FC<HeroProps> = ({ chromeStoreUrl, demoUrl, heroMediaUrl }) =>
           <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
             <h1 className="text-4xl tracking-tight font-extrabold text-slate-900 sm:text-5xl md:text-6xl">
               <span className="block">Trust Shorts, Reels, and TikToks again.</span>
-              <span className="block text-teal-600">ScrollSafe spots likely AI in seconds.</span>
+              <span className="block bg-gradient-to-r from-[#2d7bff] to-[#58c8ff] text-transparent bg-clip-text">
+                ScrollSafe spots likely AI in seconds.
+              </span>
             </h1>
             <p className="mt-3 text-base text-slate-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl leading-relaxed">
               Built specifically for short-form feeds, ScrollSafe adds a subtle badge to YouTube
@@ -49,7 +51,7 @@ const Hero: React.FC<HeroProps> = ({ chromeStoreUrl, demoUrl, heroMediaUrl }) =>
                   href={chromeStoreUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center px-8 py-4 border border-transparent text-base font-semibold rounded-lg text-white bg-teal-600 hover:bg-teal-700 md:text-lg transition-all shadow-md inline-flex"
+                  className="flex items-center justify-center px-8 py-4 border border-transparent text-base font-semibold rounded-lg text-white bg-gradient-to-r from-[#2d7bff] to-[#58c8ff] hover:shadow-lg md:text-lg transition-all inline-flex"
                 >
                   Install on Chrome
                 </a>

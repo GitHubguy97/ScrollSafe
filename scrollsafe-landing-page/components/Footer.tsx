@@ -1,6 +1,7 @@
 
 import React from "react";
-import { Github, Shield } from "lucide-react";
+import { Github } from "lucide-react";
+import BrandBadge from "./BrandBadge";
 
 type FooterProps = {
   chromeStoreUrl: string;
@@ -21,7 +22,7 @@ const Footer: React.FC<FooterProps> = ({
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-1">
             <div className="flex items-center space-x-2 mb-6">
-              <Shield className="w-6 h-6 text-teal-600" />
+              <BrandBadge className="w-9 h-9" />
               <span className="text-lg font-bold tracking-tight text-slate-900">ScrollSafe</span>
             </div>
             <p className="text-slate-500 text-sm leading-relaxed mb-6">
@@ -47,13 +48,13 @@ const Footer: React.FC<FooterProps> = ({
                   href={chromeStoreUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-teal-600 transition-colors"
+                  className="hover:text-[#2d7bff] transition-colors"
                 >
                   Chrome Web Store
                 </a>
               </li>
-              <li><a href="#how-it-works" className="hover:text-teal-600 transition-colors">How it works</a></li>
-              <li><a href="#faq" className="hover:text-teal-600 transition-colors">FAQ</a></li>
+              <li><a href="#how-it-works" className="hover:text-[#2d7bff] transition-colors">How it works</a></li>
+              <li><a href="#faq" className="hover:text-[#2d7bff] transition-colors">FAQ</a></li>
             </ul>
           </div>
 
@@ -65,7 +66,7 @@ const Footer: React.FC<FooterProps> = ({
                   href={privacyPolicyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-teal-600 transition-colors"
+                  className="hover:text-[#2d7bff] transition-colors"
                 >
                   Privacy Policy
                 </a>
@@ -75,7 +76,7 @@ const Footer: React.FC<FooterProps> = ({
                   href={githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-teal-600 transition-colors"
+                  className="hover:text-[#2d7bff] transition-colors"
                 >
                   Terms of Service
                 </a>
@@ -88,7 +89,7 @@ const Footer: React.FC<FooterProps> = ({
             <ul className="space-y-2 text-sm text-slate-500 font-medium">
               <li>Email us any time:</li>
               <li>
-                <a href={`mailto:${supportEmail}`} className="hover:text-teal-600 transition-colors">
+                <a href={`mailto:${supportEmail}`} className="hover:text-[#2d7bff] transition-colors">
                   {supportEmail}
                 </a>
               </li>

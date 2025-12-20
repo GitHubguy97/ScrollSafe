@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Mail, Bug, Map } from "lucide-react";
+import { Mail, Bug } from "lucide-react";
 
 type SupportContactProps = {
   supportEmail: string;
@@ -13,14 +13,14 @@ const SupportContact: React.FC<SupportContactProps> = ({ supportEmail, githubUrl
   return (
     <section id="support" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-teal-600 rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-teal-500 rounded-full blur-3xl opacity-50"></div>
+        <div className="bg-gradient-to-r from-[#2d7bff] to-[#58c8ff] rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-white/20 rounded-full blur-3xl opacity-50"></div>
           
           <div className="relative grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <div>
                 <h2 className="text-3xl font-bold text-white mb-6">Need help or have ideas?</h2>
-                <p className="text-teal-50 text-lg leading-relaxed">
+                <p className="text-[#e8f1ff] text-lg leading-relaxed">
                   Email is the quickest way to reach us. Whether it's a bug report, platform request,
                   or security issue, drop a note and we'll respond fast.
                 </p>

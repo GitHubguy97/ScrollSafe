@@ -1,6 +1,7 @@
 
 import React from "react";
-import { Github, Shield } from "lucide-react";
+import { Github } from "lucide-react";
+import BrandBadge from "./BrandBadge";
 
 type NavbarProps = {
   chromeStoreUrl: string;
@@ -13,15 +14,15 @@ const Navbar: React.FC<NavbarProps> = ({ chromeStoreUrl, githubUrl }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-2">
-            <Shield className="w-8 h-8 text-teal-600" />
+            <BrandBadge className="w-10 h-10" />
             <span className="text-xl font-bold tracking-tight text-slate-900">ScrollSafe</span>
           </div>
           
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
-            <a href="#how-it-works" className="hover:text-teal-600 transition-colors">How it works</a>
-            <a href="#privacy" className="hover:text-teal-600 transition-colors">Privacy</a>
-            <a href="#faq" className="hover:text-teal-600 transition-colors">FAQ</a>
-            <a href="#support" className="hover:text-teal-600 transition-colors">Support</a>
+            <a href="#how-it-works" className="hover:text-[#2d7bff] transition-colors">How it works</a>
+            <a href="#privacy" className="hover:text-[#2d7bff] transition-colors">Privacy</a>
+            <a href="#faq" className="hover:text-[#2d7bff] transition-colors">FAQ</a>
+            <a href="#support" className="hover:text-[#2d7bff] transition-colors">Support</a>
           </div>
 
           <div className="flex items-center">
@@ -38,7 +39,7 @@ const Navbar: React.FC<NavbarProps> = ({ chromeStoreUrl, githubUrl }) => {
               href={chromeStoreUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-teal-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-teal-700 transition-all shadow-sm inline-block"
+              className="bg-gradient-to-r from-[#2d7bff] to-[#5bc6ff] text-white px-5 py-2 rounded-full text-sm font-semibold hover:shadow-lg transition-all inline-block"
             >
               Install on Chrome
             </a>

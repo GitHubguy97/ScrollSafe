@@ -35,7 +35,7 @@ const HowItWorks: React.FC = () => {
         <div className="grid md:grid-cols-3 gap-8">
           {steps.map((step, i) => (
             <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center transition-all hover:shadow-md">
-              <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center mb-6">
+              <div className="w-12 h-12 bg-[#e8f1ff] text-[#2d7bff] rounded-xl flex items-center justify-center mb-6 shadow-inner">
                 {step.icon}
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-4">{step.title}</h3>

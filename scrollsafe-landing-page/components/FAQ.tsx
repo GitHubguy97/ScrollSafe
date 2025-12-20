@@ -54,7 +54,7 @@ const FAQ: React.FC = () => {
               >
                 <span className="font-bold text-slate-900">{faq.question}</span>
                 {openIndex === i ? (
-                  <Minus className="w-5 h-5 text-teal-600" />
+                  <Minus className="w-5 h-5 text-[#2d7bff]" />
                 ) : (
                   <Plus className="w-5 h-5 text-slate-400" />
                 )}

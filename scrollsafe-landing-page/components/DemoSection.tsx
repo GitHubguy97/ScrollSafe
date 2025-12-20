@@ -45,7 +45,7 @@ const DemoSection: React.FC<DemoSectionProps> = ({ demoUrl }) => {
               onClick={() => setIsPlaying(true)}
             >
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg mb-4">
-                <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-teal-600 border-b-[12px] border-b-transparent ml-1" />
+                <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-[#2d7bff] border-b-[12px] border-b-transparent ml-1" />
               </div>
               Click to watch the real demo
             </button>
